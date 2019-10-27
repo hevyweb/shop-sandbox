@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+    <div id="users">
+        <h2>Users</h2>
+        <div class="table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Username</th>
+                        <th>Name</th>
+                        <th>Age</th>
+                        <th>Sex</th>
+                        <th>Email</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                        <tr>
+                            <td>{{ user.id }}</td>
+                            <td>{{ user.username }}</td>
+                            <td>{{ user.firstName }} {{ user.lastName }}</td>
+                            <td>{{ user.age }}</td>
+                            <td>
+                                {% if user.sex %}
+                                    Female
+                                {% else %}
+                                    Male
+                                {% endif %}
+                            </td>
+                            <td>
+                                {{ user.email }}
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr><td colspan="6">No users in the DB</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

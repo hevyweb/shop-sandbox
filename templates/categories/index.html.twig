@@ -1,0 +1,87 @@
+{% extends 'base.html.twig' %}
+{% import _self as macro %}
+
+
+{% macro multilevel(categories) %}
+    {% import _self as macro %}
+    {% if categories|length > 0 %}
+        <ul class="tree-grid">
+            {% for category in categories %}
+                <li class="tree-grid-item">
+                    <div class="tree-grid-item-wrapper table-block">
+                        <div class="table-cell-block tree-grid-item-icon">
+                        {% if category.getChildren().count() %}
+                            <span class="tree-grid-item-folder-container">
+                                <i class="fas fa-folder tree-grid-item-folder"></i>
+                            </span>
+                        {% else %}
+                            <i class="far fa-folder tree-grid-item-folder-inactive"></i>
+                        {% endif %}
+                        </div>
+                        <div class="tree-grid-item-name-wrapper table-cell-block">
+                            <span class="tree-grid-item-name">
+                                {{ category.name }}
+                            </span>
+                        </div>
+                        <div class="tree-grid-count table-cell-block">({{ category.getChildren().count() }})</div>
+                        <div class="tree-grid-action-bar">
+                            <a href="#" class="tree-grid-action tree-grid-add fas fa-plus-square" data-target="{{ category.id }}" title="Add subcategory"></a>
+                            <a href="#" class="tree-grid-action tree-grid-edit fas fa-edit" data-browse="{{ path('category-edit', {'id': category.id}) }}" data-target="{{ category.parent.id }}" title="Edit category"></a>
+                            <a href="#" class="tree-grid-action tree-grid-delete fas fa-trash" data-browse="{{ path('category-delete', {'id': category.id}) }}" title="Remove this branch of categories"></a>
+                        </div>
+                    </div>
+                    {% if category.getChildren() is iterable %}
+                        {{ macro.multilevel(category.getChildren()) }}
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endmacro %}
+
+{% block content %}
+    <div id="categories">
+        <h2>Categories</h2>
+
+        <div class="tree-grid-create">
+            {% if error %}
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
+                    {% for child in error.children %}
+                        {# Display the errors of the form item #}
+                        {%for e in child.vars.errors%}
+                            <span>{{e.message}}</span>
+                        {%endfor%}
+                    {%endfor%}
+                </div>
+            {% endif %}
+            <div class="create-form-wrapper">
+                {{ form_start(form) }}
+                <div class="table-block">
+                    <div class="fas fa-caret-right table-cell-tab-icon" aria-hidden="true"></div>
+                    <div class="table-cell-block whole">
+                        {{ form_widget(form.name, {'attr': {'placeholder': "Category name", 'maxlength': 255}}) }}
+                        {{ form_widget(form.parent) }}
+                    </div>
+                    <div class="table-cell-block hidden">
+                        <button type="button" class="create-form-cancel-button" title="Cancel"><i class="fas fa-times" aria-hidden="true"></i></button>
+                    </div>
+                    <div class="table-cell-block hidden">
+                        <button type="submit" class="create-form-submit-button" title="Save"><i class="fas fa-check" aria-hidden="true"></i></button>
+                    </div>
+                    <div class="table-cell-block create-form-button">
+                        <button type="submit" title="Create new category">+</button>
+                    </div>
+                </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+
+        {{ macro.multilevel(categories) }}
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('js/categories') }}
+{% endblock %}

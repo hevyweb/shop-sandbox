@@ -1,12 +1,71 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        {% block stylesheets %}{% endblock %}
-    </head>
-    <body>
-        {% block body %}{% endblock %}
-        {% block javascripts %}{% endblock %}
-    </body>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ title }}</title>
+    {% block stylesheets %}
+        {{ encore_entry_link_tags('css/app') }}
+    {% endblock %}
+    <link rel="shortcut icon" type="image/icon" href="favicon.ico"/>
+</head>
+<body>
+{% block html %}
+<div class="body-wrapper">
+    <header id="header" role="banner">
+        {% block header %}
+            {% block user %}
+            <div class="user-control">
+                {% if app.user %}
+                    <a href="{{ path('user-edit', {'id': app.user.id}) }}">
+                        <i class="fas fa-user-circle"></i>
+                        {{ app.user.firstName }} {{ app.user.lastName }}
+                    </a> |
+                    <a href="{{ path('app_logout') }}">Logout <i class="fas fa-sign-out-alt"></i></a>
+                {% else %}
+                    <a href="{{ path('user-login') }}"><i class="fas fa-sign-in-alt"></i> Sign in</a> |
+                    <a href="{{ path('user-registration') }}">Sign up <i class="fas fa-user-plus"></i></a>
+                {% endif %}
+            </div>
+            {% endblock %}
+            {% block mainmenu %}
+            <nav class="navbar navbar-default">
+                <ul class="nav navbar-nav navbar-right">
+                    {% block menu %}
+                    <li><a href="{{ path('home') }}">Home</a></li>
+                    <li><a href="{{ path('users') }}">Users</a></li>
+                    <li><a href="{{ path('categories') }}">Categories</a></li>
+                    {% endblock %}
+                </ul>
+            </nav>
+            {%  endblock %}
+        {% endblock %}
+    </header>
+
+    {% block main %}
+    <main role="main">
+        <section id="main">
+            <div class="container">
+                {% block content %}{% endblock %}
+            </div>
+        </section>
+    </main>
+    {% endblock %}
+    <div class="push"></div>
+</div>
+<footer id="footer" role="contentinfo">
+    {% block footer %}
+        <div class="container">
+            <div class="footer-area">
+                <p class="copy-right">&copy; Copyright. All right reserved.</p>
+            </div>
+        </div>
+    {% endblock %}
+</footer>
+{% block javascripts %}
+    {{ encore_entry_script_tags('js/app') }}
+{% endblock %}
+{% endblock %}
+</body>
 </html>

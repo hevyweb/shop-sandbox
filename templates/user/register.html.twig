@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+<div class="user">
+    <h1>{{ title }}</h1>
+    <span class="underline" aria-hidden="true"></span>
+    {{ form_start(form) }}
+        {{ form_row(form.username) }}
+        {{ form_row(form.email) }}
+        {{ form_row(form.plainPassword.first) }}
+        {{ form_row(form.plainPassword.second) }}
+        {{ form_row(form.firstName) }}
+        {{ form_row(form.lastName) }}
+        {{ form_row(form.age) }}
+        {{ form_row(form.sex) }}
+
+    <button type="submit">{{ submit }}</button>
+    {{ form_end(form) }}
+</div>
+{% endblock %}

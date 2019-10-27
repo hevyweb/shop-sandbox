@@ -1,0 +1,9 @@
+parameters:
+  facebook_app_id: 205768632814988
+  facebook_secret: e44bfacb124895c14447a8aa522952e4
+
+services:
+  facebook:
+    class: App\Library\Facebook
+    calls:
+      - ['setContainer', ['@service_container']]
