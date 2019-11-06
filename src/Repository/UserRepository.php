@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Symfony\Bridge\Doctrine\Security\User\UserLoaderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -33,5 +34,10 @@ class UserRepository extends ServiceEntityRepository implements UserLoaderInterf
     public function loadUserByUsername($username)
     {
         return $this->findOneBy(['username' => $username]);
+    }
+
+    public function total(Criteria $criteria)
+    {
+        return $this->_em->getUnitOfWork()->getEntityPersister($this->_entityName)->count($criteria);
     }
 }

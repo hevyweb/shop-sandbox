@@ -21,7 +21,7 @@ final class Version20190909162345 extends AbstractMigration
 
         $sql = <<<SQL
             CREATE TABLE IF NOT EXISTS `user` (
-            `id` int(11) NOT NULL,
+            `id` int(11) NOT NULL AUTO_INCREMENT,
             `first_name` varchar(255) NOT NULL,
             `last_name` varchar(255) NOT NULL,
             `age` int(11),
@@ -29,7 +29,8 @@ final class Version20190909162345 extends AbstractMigration
             `username` varchar(64) NOT NULL,
             `email` varchar(255) NOT NULL,
             `password` varchar(64) NOT NULL,
-            `roles` longtext NOT NULL COMMENT '(DC2Type:array)'
+            `roles` longtext NOT NULL COMMENT '(DC2Type:array)',
+            PRIMARY KEY (`id`)
             ) ENGINE=InnoDB
 SQL;
 
@@ -37,8 +38,8 @@ SQL;
 
         $sql = <<<SQL
             ALTER TABLE `user`
-            ADD PRIMARY KEY (`id`),
-            ADD UNIQUE KEY `UNIQ_8D93D649E7927C74` (`email`)
+            ADD UNIQUE KEY `UNIQ_8D93D649E7927C74` (`email`),
+            ADD UNIQUE KEY `UNIQ_8D93D649E7927C75` (`username`)
 SQL;
 
         $this->addSql($sql);

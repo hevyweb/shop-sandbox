@@ -3,6 +3,17 @@
 {% block content %}
     <div id="users">
         <h2>Users</h2>
+        <form method="get" action="{{ path('users') }}">
+            <input type="text" placeholder="User name" value="{{ filtervariables.q }}" name="q">
+            <button type="submit"><i class="fas fa-search"></i></button>
+        </form>
+        {% include 'common/pagination.html.twig' with {
+            currentFilters: filtervariables,
+            currentPage: page,
+            paginationPath: "users",
+            lastPage: totalPages,
+            showAlwaysFirstAndLast: true
+        } only %}
         <div class="table">
             <table>
                 <thead>
@@ -16,8 +27,8 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for user in users %}
-                        <tr>
+                    {% for key, user in users %}
+                        <tr class="{{ key%2 ? 'odd' : 'even' }}">
                             <td>{{ user.id }}</td>
                             <td>{{ user.username }}</td>
                             <td>{{ user.firstName }} {{ user.lastName }}</td>
@@ -34,10 +45,17 @@
                             </td>
                         </tr>
                     {% else %}
-                        <tr><td colspan="6">No users in the DB</td></tr>
+                        <tr><td colspan="6" class="no-results">No users in the DB</td></tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
+        {% include 'common/pagination.html.twig' with {
+            currentFilters: { myFilter: filtervariables },
+            currentPage: page,
+            paginationPath: "users",
+            lastPage: totalPages,
+            showAlwaysFirstAndLast: true
+        } only %}
     </div>
 {% endblock %}

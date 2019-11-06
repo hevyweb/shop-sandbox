@@ -7,9 +7,12 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
+ * @UniqueEntity(fields="email", message="This email has been already registered.")
+ * @UniqueEntity(fields="username", message="This username has been already used.")
  */
 class User implements UserInterface
 {
@@ -118,7 +121,7 @@ class User implements UserInterface
     /**
      * @return int
      */
-    public function getAge(): int
+    public function getAge(): ?int
     {
         return $this->age;
     }
@@ -212,9 +215,9 @@ class User implements UserInterface
     /**
      * Returns the username used to authenticate the user.
      *
-     * @return string The username
+     * @return string|null The username
      */
-    public function getUsername(): string
+    public function getUsername(): ?string
     {
         return $this->username;
     }
@@ -250,9 +253,9 @@ class User implements UserInterface
     /**
      * Returns the username used to authenticate the user.
      *
-     * @return string The username
+     * @return string|null The username
      */
-    public function getEmail(): string
+    public function getEmail(): ?string
     {
         return $this->email;
     }

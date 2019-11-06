@@ -542,3 +542,67 @@ li .tree-grid-create {
 .hidden {
     display: none;
 }
+
+.no-results {
+    padding: 40px 0;
+    text-align: center;
+}
+
+#users table {
+    width: 100%;
+}
+
+.pagination {
+    padding: 20px;
+    text-align: center;
+    clear: both;
+}
+
+.pagination a{
+    background: #009e9a;
+    color: #fff;
+    padding: 5px 10px;
+    margin: 5px;
+    border-radius: 3px;
+}
+
+.pagination span {
+    padding: 5px 7px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    color: #aaa;
+    margin: 5px;
+    background: #fff;
+}
+
+.pagination a.active {
+    border: 1px solid #009e9a;
+    background: #fff;
+    color: #009e9a;
+}
+
+#users form {
+    padding-right: 50px;
+    position: relative;
+    margin-bottom: 20px;
+}
+
+#users form input {
+    width: 100%;
+    height: 40px;
+    padding: 0 10px;
+    border-radius: 3px 0 0 3px;
+    border: 1px solid #ccc;
+}
+
+#users form button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 40px;
+    border-radius: 0 3px 3px 0;
+}
+
+table tr.odd td {
+    background: #cccccc;
+}

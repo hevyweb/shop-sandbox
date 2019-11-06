@@ -5,6 +5,8 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Form\EditUserType;
 use App\Form\UserType;
+use App\Repository\UserRepository;
+use Doctrine\Common\Collections\Criteria;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -15,18 +17,39 @@ use Symfony\Component\HttpFoundation\Response;
 
 class UserController extends AbstractController
 {
+    const LIMIT = 20;
     /**
      * List of all users
      *
      * @Route("/users", name="users")
      */
-    public function indexAction(): Response
+    public function indexAction(Request $request): Response
     {
-        $users = $this->getDoctrine()->getRepository(User::class)->findAll();
+        $search = $request->get('q');
+        $page = intval($request->get('page', 1));
+        /**
+         * @var UserRepository $userRepository
+         */
+        $userRepository = $this->getDoctrine()->getRepository(User::class);
+        $criteria = Criteria::create();
+
+        if (!empty($search)) {
+            $criteria->where(Criteria::expr()->contains("username", $search));
+        }
+        $criteria->orderBy(array("id" => Criteria::ASC))
+            ->setFirstResult(($page-1)*self::LIMIT)
+            ->setMaxResults(self::LIMIT);
+
+        $users = $userRepository->matching($criteria);
+        $total = $userRepository->total($criteria   );
+        $totalPages = ceil($total/self::LIMIT);
 
         return $this->render('user/index.html.twig', [
             'users' => $users,
-            'title' => 'Users'
+            'title' => 'Users',
+            'totalPages' => $totalPages,
+            'page' => $page,
+            'filtervariables' => ['q' => $search]
         ]);
     }
 
@@ -40,7 +63,15 @@ class UserController extends AbstractController
     public function editAction(Request $request): Response
     {
         $userId = $request->get('id');
-        $userRepository = $this->getDoctrine()->getRepository(User::class);
+        /**
+         * @var User $currentUser
+         */
+        $currentUser = $this->getUser();
+        if ($currentUser->getId() != $userId && !in_array('ROLE_ADMIN', $currentUser->getRoles())) {
+            throw new NotFoundHttpException('Permission denied.');
+        }
+
+            $userRepository = $this->getDoctrine()->getRepository(User::class);
         /**
          * @var User|null $user
          */
@@ -77,6 +108,9 @@ class UserController extends AbstractController
      */
     public function createAction(Request $request, UserPasswordEncoderInterface $passwordEncoder): Response
     {
+        if (!empty($this->getUser())) {
+            return $this->redirectToRoute('user-edit', ['id' => $this->getUser()->getId()]);
+        }
         $user = new User();
         $form = $this->createForm(UserType::class, $user);
 
