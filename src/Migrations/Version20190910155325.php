@@ -16,38 +16,32 @@ final class Version20190910155325 extends AbstractMigration
 
     public function up(Schema $schema) : void
     {
-        // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
-        $sql = <<<SQL
-            CREATE TABLE IF NOT EXISTS category (
-            id INT AUTO_INCREMENT NOT NULL, 
-            parent_id INT DEFAULT NULL, 
-            created_by_id INT NOT NULL, 
-            updated_by_id INT NOT NULL, 
-            name VARCHAR(255) NOT NULL, 
-            created DATETIME NOT NULL, 
-            updated DATETIME NOT NULL,
-            PRIMARY KEY(id)) 
-            ENGINE = InnoDB
-SQL;
+        $this->addSql('
+            CREATE TABLE IF NOT EXISTS `category` (
+                `id` INT AUTO_INCREMENT NOT NULL, 
+                `parent_id` INT DEFAULT NULL, 
+                `created_by_id` INT NOT NULL, 
+                `updated_by_id` INT NOT NULL, 
+                `name` VARCHAR(255) NOT NULL, 
+                `created` DATETIME NOT NULL, 
+                `updated` DATETIME NOT NULL,
+                PRIMARY KEY(`id`)
+            ) ENGINE = InnoDB'
+        );
 
-        $this->addSql($sql);
-        $sql = <<<SQL
-            ALTER TABLE category ADD CONSTRAINT FK_64C19C1727ACA70 FOREIGN KEY (parent_id) REFERENCES category (id);
-            ALTER TABLE category ADD CONSTRAINT FK_64C19C1B03A8386 FOREIGN KEY (created_by_id) REFERENCES user (id);
-            ALTER TABLE category ADD CONSTRAINT FK_64C19C1896DBBDE FOREIGN KEY (updated_by_id) REFERENCES user (id);
-            ALTER TABLE category ADD UNIQUE(`name`)
-SQL;
-
-        $this->addSql($sql);
+        $this->addSql('
+            ALTER TABLE `category` ADD CONSTRAINT FK_64C19C1727ACA70 FOREIGN KEY (`parent_id`) REFERENCES `category` (`id`);
+            ALTER TABLE `category` ADD CONSTRAINT FK_64C19C1B03A8386 FOREIGN KEY (`created_by_id`) REFERENCES user (`id`);
+            ALTER TABLE `category` ADD CONSTRAINT FK_64C19C1896DBBDE FOREIGN KEY (`updated_by_id`) REFERENCES user (`id`);
+            ALTER TABLE `category` ADD UNIQUE(`name`)'
+        );
     }
 
     public function down(Schema $schema) : void
     {
-        // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
-        $this->addSql('DROP TABLE IF EXISTS category');
-
+        $this->addSql('DROP TABLE IF EXISTS `category`');
     }
 }

@@ -1,0 +1,75 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+    <div id="products">
+        <h2>Products</h2>
+        <div class="button-section">
+            <a href="{{ path('product-create') }}" class="button">Add new</a>
+            <a href="#" id="delete-all-products" class="button" data-content="Are you sure you want to remove selected products?">Delete</a>
+        </div>
+        <form method="get" action="{{ path('products') }}" class="quick-search">
+            <input type="text" placeholder="Product name" value="{{ filtervariables.q }}" name="q">
+            <button type="submit"><i class="fas fa-search"></i></button>
+        </form>
+        {% include 'common/pagination.html.twig' with {
+            currentFilters: filtervariables,
+            currentPage: page,
+            paginationPath: "products",
+            lastPage: totalPages,
+            showAlwaysFirstAndLast: true
+        } only %}
+        <div class="table">
+            <form method="post" action="{{ path('products-delete') }}" class="delete-all-products-form">
+            <table class="datagrid">
+                <thead>
+                <tr>
+                    <th class="small-coll"><input type="checkbox" class="check-all" ></th>
+                    <th class="small-coll">#</th>
+                    <th class="small-coll">Image</th>
+                    <th>Title</th>
+                    <th class="small-coll">Price</th>
+                    <th class="small-coll">Created</th>
+                    <th class="small-coll">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for key, product in products %}
+                    <tr class="{{ key%2 ? 'odd' : 'even' }}">
+                        <td><input type="checkbox" value="{{ product.id }}" name="id[]"></td>
+                        <td>{{ product.id }}</td>
+                        <td><a href="{{ path('product-edit', {id: product.id}) }}">
+                                {% include 'common/image.html.twig' with {
+                                    image: product.image
+                                } only %}
+                            </a>
+                        </td>
+                        <td><a href="{{ path('product-edit', {id: product.id}) }}">{{ product.name }}</a></td>
+                        <td>{{ product.price|number_format(2, '.', ' ') }}</td>
+                        <td>{{ product.createdAt|date("d.m.Y H:i:s") }}</td>
+                        <td><a href="{{ path('product-delete', {id: product.id}) }}" class="delete-action" data-content="Are you sure, you want to remove this item?">
+                                <i class="fas fa-trash-alt bulk-remove-products"></i>
+                            </a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="7" class="no-results">No products</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <input type="hidden" name="token" value="{{ token }}">
+            </form>
+        </div>
+        {% include 'common/pagination.html.twig' with {
+            currentFilters: filtervariables,
+            currentPage: page,
+            paginationPath: "products",
+            lastPage: totalPages,
+            showAlwaysFirstAndLast: true
+        } only %}
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('js/datagrid') }}
+{% endblock %}

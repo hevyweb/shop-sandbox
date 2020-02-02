@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\EditUserType;
+use App\Form\ResetPasswordType;
 use App\Form\UserType;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\Criteria;
@@ -126,9 +127,9 @@ class UserController extends AbstractController
         }
 
         return $this->render('user/register.html.twig', [
-                'title' => 'Registration',
+                'title' => 'Create your account',
                 'form' => $form->createView(),
-                'submit' => 'Register'
+                'submit' => 'Sign up'
             ]
         );
     }
@@ -150,8 +151,20 @@ class UserController extends AbstractController
         $lastUsername = $authenticationUtils->getLastUsername();
 
         return $this->render('user/login.html.twig', [
-            'title' => 'Login!',
+            'title' => 'Please sign in',
             'last_username' => $lastUsername,
+            'error' => $error
+        ]);
+    }
+
+    public function changepassword(Request $request)
+    {
+        $resetPassword = $this->createForm(ResetPasswordType::class);
+        $error = [];
+
+        return $this->render('user/login.html.twig', [
+            'title' => 'Login!',
+            'last_username' => $resetPassword,
             'error' => $error
         ]);
     }

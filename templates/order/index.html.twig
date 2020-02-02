@@ -1,0 +1,73 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+    <div id="orders">
+        <h2>Orders</h2>
+        <div class="button-section">
+            <a href="{{ path('order-create') }}" class="button">Add new</a>
+        </div>
+        <form method="get" action="{{ path('orders') }}" class="quick-search">
+            <input type="text" placeholder="Order Id" value="{{ filtervariables.q }}" name="q">
+            <button type="submit"><i class="fas fa-search"></i></button>
+        </form>
+        {% include 'common/pagination.html.twig' with {
+            currentFilters: filtervariables,
+            currentPage: page,
+            paginationPath: "orders",
+            lastPage: totalPages,
+            showAlwaysFirstAndLast: true
+        } only %}
+        <div class="table">
+            <table class="datagrid">
+                <thead>
+                <tr>
+                    <th class="small-coll">#</th>
+                    <th class="small-coll">Products</th>
+                    <th>Items</th>
+                    <th class="small-coll">Total price</th>
+                    <th class="small-coll">Created</th>
+                    <th class="small-coll">Status</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for key, order in orders %}
+                    <tr class="{{ key%2 ? 'odd' : 'even' }}">
+                        <td>{{ order.id }}</td>
+                        <td><a href="{{ path('order-update', {id: order.id}) }}">
+                                <div class="order-product-container">
+                                    {% if order.orderItems[0].product.image is not empty %}
+                                        <img src="{{ order.orderItems[0].product.image }}" alt="{{ order.orderItems[0].product.name }}">
+                                    {% else %}
+                                        <div class="no-image">
+                                            <i class="fas fa-camera"></i>
+                                        </div>
+                                    {% endif %}
+                                    <div class="order-items-count">{{ order.getOrderItems|length }}</div>
+                                </div>
+                            </a>
+                        </td>
+                        <td></td>
+                        <td>{{ order.orderItems|totalPrice}}</td>
+                        <td>{{ order.createdAt|date("d.m.Y H:i:s") }}</td>
+                        <td>{{ order.statusLabel }}</td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="7" class="no-results">No orders</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% include 'common/pagination.html.twig' with {
+            currentFilters: filtervariables,
+            currentPage: page,
+            paginationPath: "orders",
+            lastPage: totalPages,
+            showAlwaysFirstAndLast: true
+        } only %}
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('js/datagrid') }}
+{% endblock %}

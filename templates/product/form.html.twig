@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+    <div id="product-form">
+        <div class="product-side">
+            <div class="product-image">
+            {% if product.image %}
+                <img src="{{ product.image }}" alt="" >
+            {% else %}
+                <div class="no-image"><i class="fas fa-camera"></i></div>
+            {% endif %}
+            </div>
+            <div class="product-info">
+                {% if product.createdAt %}
+                    <div>
+                        <i class="fas fa-calendar-plus"></i> {{ product.createdAt | date('d.m.Y H:i:s') }}
+                    </div>
+                {% endif %}
+                {% if product.updatedAt %}
+                    <div>
+                        <i class="fas fa-edit"></i> {{ product.updatedAt | date('d.m.Y H:i:s')}}
+                    </div>
+                {% endif %}
+                {%  if product.image is not empty %}
+                    <div>
+                        <a href="{{ path('product-delete-image', {id: product.id}) }}" class="delete-action" data-content="Are you sure, you want to remove image from this product?">
+                            <i class="fas fa-eye-slash"></i> Remove image
+                        </a>
+                    </div>
+                {% endif %}
+                {%  if product.id is not empty %}
+                    <div>
+                        <a href="{{ path('product-delete', {id: product.id}) }}" class="delete-action" data-content="Are you sure, you want to remove this product?">
+                            <i class="fas fa-trash-alt"></i> Remove product
+                        </a>
+                    </div>
+                {% endif %}
+
+            </div>
+        </div>
+        <div class="product-body">
+                {{ form_start(form) }}
+                {{ form_errors(form) }}
+                {{ form_row(form.enabled) }}
+                {{ form_row(form.name) }}
+                {{ form_row(form.description) }}
+                {{ form_row(form.price) }}
+                {{ form_row(form.category) }}
+                {{ form_row(form.image) }}
+
+                <button type="submit">{{ submit }}</button>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('js/datagrid') }}
+{% endblock %}

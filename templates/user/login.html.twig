@@ -4,7 +4,6 @@
 <div class="login_form">
     <form method="post">
         <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
-        <span class="underline" aria-hidden="true"></span>
         {% if error %}
             <div class="alert alert-danger">
                 <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
@@ -17,8 +16,8 @@
         <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required>
         <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
         <div class="checkbox mb-3 remember_me">
-            <label>
-                <input type="checkbox" id="remember_me" name="_remember_me"> <label for="remember_me">Remember me</label>
+            <label for="remember_me">
+                <input type="checkbox" id="remember_me" name="_remember_me">Remember me
             </label>
         </div>
         <button class="btn btn-lg btn-primary" type="submit">

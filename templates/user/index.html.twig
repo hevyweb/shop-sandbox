@@ -3,7 +3,7 @@
 {% block content %}
     <div id="users">
         <h2>Users</h2>
-        <form method="get" action="{{ path('users') }}">
+        <form method="get" action="{{ path('users') }}" class="quick-search">
             <input type="text" placeholder="User name" value="{{ filtervariables.q }}" name="q">
             <button type="submit"><i class="fas fa-search"></i></button>
         </form>
@@ -15,7 +15,7 @@
             showAlwaysFirstAndLast: true
         } only %}
         <div class="table">
-            <table>
+            <table class="datagrid">
                 <thead>
                     <tr>
                         <th>#</th>
@@ -30,7 +30,7 @@
                     {% for key, user in users %}
                         <tr class="{{ key%2 ? 'odd' : 'even' }}">
                             <td>{{ user.id }}</td>
-                            <td>{{ user.username }}</td>
+                            <td><a href="{{ path('user-edit', {id: user.id}) }}">{{ user.username }}</a></td>
                             <td>{{ user.firstName }} {{ user.lastName }}</td>
                             <td>{{ user.age }}</td>
                             <td>
@@ -51,7 +51,7 @@
             </table>
         </div>
         {% include 'common/pagination.html.twig' with {
-            currentFilters: { myFilter: filtervariables },
+            currentFilters: filtervariables,
             currentPage: page,
             paginationPath: "users",
             lastPage: totalPages,

@@ -11,6 +11,8 @@ Encore
     .setPublicPath('/assets')
     .addEntry('js/app', './assets/js/app.js')
     .addEntry('js/categories', './assets/js/categories.js')
+    .addEntry('js/order', './assets/js/order.js')
+    .addEntry('js/datagrid', './assets/js/datagrid.js')
     .addStyleEntry('css/app', './assets/css/app.css')
     .splitEntryChunks()
     .enableSingleRuntimeChunk()

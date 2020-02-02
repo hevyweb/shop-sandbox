@@ -1,0 +1,165 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+<div id="orders">
+    <h2>{{ title }}</h2>
+</div>
+    {% if order.orderItems is not empty %}
+        <div class="order-statuses">
+            {% if order.status == 6 %}
+                <div class="status-canceled">
+                    <i class="fas fa-times-circle"></i>{{ status.getRejectedStatus() }}
+                </div>
+            {%  else  %}
+                {% for id, statusLabel in status.getActiveStatuses() %}
+                    <div class="status-{{ id==order.status ? 'active' : 'passive' }}"><i class="fas fa-check-circle"></i>{{ statusLabel }}</div>
+                {% endfor %}
+            {% endif %}
+        </div>
+        <table class="order-item datagrid">
+            <thead>
+                <tr>
+                    <th class="small-coll">
+                        #
+                    </th>
+                    <th class="small-coll">
+                        Product image
+                    </th>
+                    <th>
+                        Product title
+                    </th>
+                    <th class="small-coll">
+                        Price
+                    </th>
+                    <th class="small-coll">
+                        Quantity
+                    </th>
+                    <th class="small-coll">
+                        Total
+                    </th>
+                    <th class="small-coll">
+                        Actions
+                    </th>
+                </tr>
+            </thead>
+            {% for key, orderItem in order.orderItems %}
+            <tr>
+                <td>{{ key+1 }}</td>
+                <td>
+                    <a href="{{ path('product-edit', {'id': orderItem.product.id}) }}" >
+                {% include 'common/image.html.twig' with {
+                    image: orderItem.product.image
+                } only %}
+                    </a>
+                </td>
+                <td><a href="{{ path('product-edit', {'id': orderItem.product.id}) }}" >{{ orderItem.product.name }}</a></td>
+                <td><div class="currency">{{ orderItem.price|number_format(2, '.', ' ') }}</div></td>
+                <td>
+                    <div class="quantity-container">
+                        <a href="#" class="subtract-one">
+                            <i class="fas fa-minus"></i>
+                        </a>
+                        <form method="post" action="">
+                        <input type="number" min="1" value="{{ orderItem.quantity }}" name="itemId[{{ orderItem.id }}]" >
+                        </form>
+                        <a href="#" class="add-one">
+                            <i class="fas fa-plus"></i>
+                        </a>
+                    </div>
+                </td>
+                <td><div class="currency">{{ (orderItem.price*orderItem.quantity)|number_format(2, '.', ' ') }}</div></td>
+                <td class="action-buttons">
+                    <div>
+                    <button class="submit-button"><i class="fas fa-check-circle"></i></button>
+                    <a href="{{ path('order-item-delete', {'orderItem': orderItem.id}) }}" class="order-delete"
+                       data-content="Are you sure you want to remove this product from order?"><i class="fas fa-trash-alt"></i></a>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <td colspan="5">
+                    Delivery
+                </td>
+                <td colspan="2">
+                    ---
+                </td>
+            </tr>
+            <tr>
+                <td colspan="5"><b>Total</b></td>
+                <td colspan="2">{{ order.orderItems|totalPrice }}</td>
+            </tr>
+        </table>
+        <h2>Additional details</h2>
+        {{ form_start(form) }}
+        {{ form_errors(form) }}
+        {{ form_row(form.status) }}
+
+        <button type="submit">Submit</button>
+        {{ form_end(form) }}
+    {% else %}
+        <div class="no-items">
+            Add some products to this order
+        </div>
+    {% endif %}
+    <h2>Additional products</h2>
+    <form method="get" action="" class="quick-search">
+        <input type="text" placeholder="Product name" value="{{ filtervariables.q }}" name="q">
+        <button type="submit"><i class="fas fa-search"></i></button>
+    </form>
+    {% if filtervariables is not empty %}
+        {% include 'common/pagination.html.twig' with {
+            currentFilters: filtervariables,
+            currentPage: page,
+            paginationPath: "products",
+            lastPage: totalPages,
+            showAlwaysFirstAndLast: true
+        } only %}
+        <div class="table">
+            <table class="datagrid">
+                <thead>
+                <tr>
+                    <th class="small-coll">#</th>
+                    <th class="small-coll">Image</th>
+                    <th>Title</th>
+                    <th class="small-coll">Price</th>
+                    <th class="small-coll">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for key, product in products %}
+                    <tr class="{{ key%2 ? 'odd' : 'even' }}">
+                        <td>{{ product.id }}</td>
+                        <td><a href="{{ path('product-edit', {id: product.id}) }}" target="_blank">
+                                {% include 'common/image.html.twig' with {
+                                    image: product.image
+                                } only %}
+                            </a>
+                        </td>
+                        <td><a href="{{ path('product-edit', {id: product.id}) }}" target="_blank">{{ product.name }}</a></td>
+                        <td>{{ product.price|number_format(2, '.', ' ') }}</td>
+                        <td><a href="{{ path('order-item-add', {orderId: (order.id?order.id:0), itemId: product.id}) }}" >
+                                <i class="fas fa-cart-plus"></i>
+                            </a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="7" class="no-results">No products</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% include 'common/pagination.html.twig' with {
+            currentFilters: filtervariables,
+            currentPage: page,
+            paginationPath: "products",
+            lastPage: totalPages,
+            showAlwaysFirstAndLast: true
+        } only %}
+    {% endif %}
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('js/order') }}
+{% endblock %}

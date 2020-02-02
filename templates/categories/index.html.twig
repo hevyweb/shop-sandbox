@@ -25,9 +25,15 @@
                         </div>
                         <div class="tree-grid-count table-cell-block">({{ category.getChildren().count() }})</div>
                         <div class="tree-grid-action-bar">
-                            <a href="#" class="tree-grid-action tree-grid-add fas fa-plus-square" data-target="{{ category.id }}" title="Add subcategory"></a>
-                            <a href="#" class="tree-grid-action tree-grid-edit fas fa-edit" data-browse="{{ path('category-edit', {'id': category.id}) }}" data-target="{{ category.parent.id }}" title="Edit category"></a>
-                            <a href="#" class="tree-grid-action tree-grid-delete fas fa-trash" data-browse="{{ path('category-delete', {'id': category.id}) }}" title="Remove this branch of categories"></a>
+                            <a href="#" class="tree-grid-action tree-grid-add" data-target="{{ category.id }}" title="Add subcategory">
+                                <i class="fas fa-plus-square"></i>
+                            </a>
+                            <a href="#" class="tree-grid-action tree-grid-edit" data-browse="{{ path('category-edit', {'id': category.id}) }}" data-target="{{ category.parent.id }}" title="Edit category">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="#" class="tree-grid-action tree-grid-delete" data-browse="{{ path('category-delete', {'id': category.id}) }}" title="Remove this branch of categories">
+                                <i class="fas fa-trash"></i>
+                            </a>
                         </div>
                     </div>
                     {% if category.getChildren() is iterable %}

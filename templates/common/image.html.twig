@@ -1,0 +1,9 @@
+{% spaceless %}
+    {%  if image is not empty %}
+        <img src="{{ image }}" alt="">
+    {% else %}
+        <div class="no-image">
+            <i class="fas fa-camera"></i>
+        </div>
+    {% endif %}
+{% endspaceless %}
