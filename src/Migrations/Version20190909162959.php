@@ -18,17 +18,16 @@ final class Version20190909162959 extends AbstractMigration
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
-        $sql = <<<SQL
-            CREATE TABLE IF NOT EXISTS `rememberme_token` (
-            `series` CHAR (88) UNIQUE NOT NULL,
-            `value` CHAR (88) NOT NULL,
-            `lastUsed` DATETIME NOT NULL,
-            `class` VARCHAR (100) NOT NULL,
-            `username` VARCHAR (200) NOT NULL
-            ) ENGINE = InnoDB;
-SQL;
-
-        $this->addSql($sql);
+        $this->addSql('
+            CREATE TABLE rememberme_token (
+            id INT AUTO_INCREMENT NOT NULL, 
+            series VARCHAR(88) NOT NULL, 
+            value VARCHAR(88) NOT NULL, 
+            last_used DATETIME NOT NULL, 
+            class VARCHAR(100) NOT NULL, 
+            username VARCHAR(200) NOT NULL, 
+            UNIQUE INDEX UNIQ_4C4CEC2C3A10012D (series), 
+            PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB');
     }
 
     public function down(Schema $schema) : void

@@ -31,10 +31,10 @@ final class Version20190910155325 extends AbstractMigration
         );
 
         $this->addSql('
-            ALTER TABLE `category` ADD CONSTRAINT FK_64C19C1727ACA70 FOREIGN KEY (`parent_id`) REFERENCES `category` (`id`);
-            ALTER TABLE `category` ADD CONSTRAINT FK_64C19C1B03A8386 FOREIGN KEY (`created_by_id`) REFERENCES user (`id`);
-            ALTER TABLE `category` ADD CONSTRAINT FK_64C19C1896DBBDE FOREIGN KEY (`updated_by_id`) REFERENCES user (`id`);
-            ALTER TABLE `category` ADD UNIQUE(`name`)'
+            ALTER TABLE `category` ADD CONSTRAINT IDX_64C19C1727ACA70 FOREIGN KEY (`parent_id`) REFERENCES `category` (`id`);
+            ALTER TABLE `category` ADD CONSTRAINT IDX_64C19C1B03A8386 FOREIGN KEY (`created_by_id`) REFERENCES user (`id`);
+            ALTER TABLE `category` ADD CONSTRAINT IDX_64C19C1896DBBDE FOREIGN KEY (`updated_by_id`) REFERENCES user (`id`);
+            ALTER TABLE `category` ADD UNIQUE KEY `UNIQ_64C19C15E237E06` (`name`)'
         );
     }
 

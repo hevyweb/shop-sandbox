@@ -7,14 +7,16 @@ use App\Form\EditUserType;
 use App\Form\ResetPasswordType;
 use App\Form\UserType;
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+use App\Entity\Role;
 
 class UserController extends AbstractController
 {
@@ -26,6 +28,13 @@ class UserController extends AbstractController
      */
     public function indexAction(Request $request): Response
     {
+        /**
+         * @var User $user
+         */
+        $user = $this->getUser();
+        if (!$user->hasRole('ROLE_ADMIN')) {
+            throw new NotFoundHttpException('Permission denied.');
+        }
         $search = $request->get('q');
         $page = intval($request->get('page', 1));
         /**
@@ -68,11 +77,11 @@ class UserController extends AbstractController
          * @var User $currentUser
          */
         $currentUser = $this->getUser();
-        if ($currentUser->getId() != $userId && !in_array('ROLE_ADMIN', $currentUser->getRoles())) {
+        if ($currentUser->getId() != $userId && !$currentUser->hasRole('ROLE_ADMIN')) {
             throw new NotFoundHttpException('Permission denied.');
         }
 
-            $userRepository = $this->getDoctrine()->getRepository(User::class);
+        $userRepository = $this->getDoctrine()->getRepository(User::class);
         /**
          * @var User|null $user
          */
@@ -81,22 +90,31 @@ class UserController extends AbstractController
             throw new NotFoundHttpException('User with id "' . $userId . '" not found.');
         }
 
-        $userEditForm = $this->createForm(EditUserType::class, $user, [
-            'action' => $this->generateUrl('user-edit', ['id' => $user->getId()])
-        ]);
-        $userEditForm->handleRequest($request);
-        if ($userEditForm->isSubmitted() && $userEditForm->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($user);
-            $entityManager->flush();
-        }
+        $tab = $request->get('tab', 'general');
 
-        return $this->render('user/edit.html.twig', [
-                'title' => 'Update user data',
-                'form' => $userEditForm->createView(),
-                'submit' => 'Save'
-            ]
-        );
+        if ($tab == 'general') {
+            $userEditForm = $this->createForm(EditUserType::class, $user, [
+                'action' => $this->generateUrl('user-edit', ['id' => $user->getId()])
+            ]);
+            $userEditForm->handleRequest($request);
+            if ($userEditForm->isSubmitted() && $userEditForm->isValid()) {
+                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager->persist($user);
+                $entityManager->flush();
+            }
+
+            return $this->render('user/edit.html.twig', [
+                    'title' => 'Update user data',
+                    'form' => $userEditForm->createView(),
+                    'submit' => 'Save',
+                    'user' => $user
+                ]
+            );
+        } elseif ($tab == 'roles') {
+            return $this->userRoles($request, $user);
+        } else {
+            throw new NotFoundHttpException('User with id "' . $userId . '" not found.');
+        }
     }
 
     /**
@@ -119,6 +137,8 @@ class UserController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $password = $passwordEncoder->encodePassword($user, $user->getPlainPassword());
             $user->setPassword($password);
+            $userRole = $this->getDoctrine()->getRepository(Role::class)->findOneBy(['code' => 'ROLE_USER']);
+            $user->addRole($userRole);
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($user);
             $entityManager->flush();
@@ -169,10 +189,46 @@ class UserController extends AbstractController
         ]);
     }
 
+    public function userRoles(Request $request, User $user)
+    {
+        if (!$this->getUser()->hasRole('ROLE_ADMIN')){
+            throw new NotFoundHttpException('Access denied.');
+        }
+
+        $roleRepository = $this->getDoctrine()->getRepository(Role::class);
+        $existingRoles = $roleRepository->findAll();
+
+        $roles = $request->get('roles');
+        $userRoles = new ArrayCollection();
+        if (!is_null($request->get('roles_count'))) {
+            if (count($roles)) {
+                foreach ($roles as $roleId => $value) {
+                    $role = $roleRepository->find($roleId);
+                    if (empty($role)) {
+                        throw new NotFoundHttpException('Such role does not exist.');
+                    }
+                    $userRoles->add($role);
+                }
+            }
+            $user->setRoles($userRoles);
+
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($user);
+            $em->flush();
+        }
+
+
+        return $this->render('user/roles.html.twig', [
+            'title' => 'User Roles',
+            'user' => $user,
+            'roles' => $existingRoles
+        ]);
+    }
+
     /**
      * Log out page
      *
-     * @Route("/logout", name="app_logout")
+     * @Route("/logout", name="user-logout")
      * @return Response
      */
     public function logout(): Response

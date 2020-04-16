@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Role;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -34,17 +35,17 @@ class User implements UserInterface
     private $lastName;
 
     /**
-     * @ORM\Column(type="integer", length=3)
+     * @ORM\Column(type="integer", length=3, nullable=true)
      */
     private $age;
 
     /**
-     * @ORM\Column(type="string", length=1)
+     * @ORM\Column(type="string", length=1, nullable=true)
      */
     private $sex;
 
     /**
-     * @ORM\Column(type="string", length=64)
+     * @ORM\Column(type="string", length=64, unique=true)
      * @Assert\NotBlank()
      */
     private $username;
@@ -70,9 +71,19 @@ class User implements UserInterface
     private $password;
 
     /**
-     * @ORM\Column(type="array")
+     * @ORM\ManyToMany(targetEntity="App\Entity\Role")
+     * @ORM\JoinTable(name="user_role", joinColumns={
+     *      @ORM\JoinColumn(name="user_id", referencedColumnName="id", onDelete="CASCADE")
+     *  }
+     * )
+     * @var Collection|Role[]
      */
-    private $roles = [];
+    private $roles;
+
+    public function __construct()
+    {
+        $this->roles = new ArrayCollection();
+    }
 
     /**
      * @return int|null
@@ -154,27 +165,62 @@ class User implements UserInterface
         return $this;
     }
 
+    public function setRoles(ArrayCollection $roles)
+    {
+        $this->roles = $roles;
+        return $this;
+    }
+
     /**
      * Returns the roles granted to the user.
      *
-     *     public function getRoles()
-     *     {
-     *         return ['ROLE_USER'];
-     *     }
-     *
-     * Alternatively, the roles might be stored on a ``roles`` property,
-     * and populated in any number of different ways when the user object
-     * is created.
-     *
-     * @return (Role|string)[] The user roles
+     * @return array roles assigned to user
      */
-    public function getRoles(): array
+    public function getRoles(): ?array
     {
-        $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
+        $roles = $this->roles->toArray();
+        $roles = array_map('strval', $roles);
+        return $roles;
+    }
 
-        return array_unique($roles);
+    /**
+     * Assign new role to the user
+     *
+     * @param Role $role
+     * @return User
+     */
+    public function addRole(Role $role): self
+    {
+        if (!$this->roles->contains($role)) {
+            $this->roles->add($role);
+        }
+        return $this;
+    }
+
+    /**
+     * Remove role
+     *
+     * @param string $role
+     * @return User
+     */
+    public function removeRole(string $role): self
+    {
+        $this->roles->removeElement($role);
+        return $this;
+    }
+
+    /**
+     * @param string $role
+     * @return bool
+     */
+    public function hasRole(string $role): bool
+    {
+        foreach ($this->roles as $userRole) {
+            if ($userRole->getCode() == $role) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

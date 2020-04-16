@@ -33,25 +33,21 @@ final class Version20191216161717 extends AbstractMigration
         $this->addSql( "
         CREATE TABLE `order_item` (
             `id` INT AUTO_INCREMENT NOT NULL, 
-            `order_id` INT NOT NULL, 
+            `parent_order_id` INT NOT NULL, 
             `product_id` INT NOT NULL, 
             `price` DOUBLE PRECISION NOT NULL, 
             `quantity` INT NOT NULL, 
-            INDEX IDX_52EA1F09FCDAEAAA (`order_id`), 
-            INDEX IDX_FS345DFGSWF2324F (`product_id`), 
+            INDEX IDX_52EA1F091252C1E9 (`parent_order_id`), 
+            INDEX IDX_52EA1F094584665A (`product_id`), 
             PRIMARY KEY(`id`)
         ) DEFAULT CHARACTER SET utf8mb4 
         COLLATE utf8mb4_unicode_ci ENGINE = InnoDB"
         );
 
-        $this->addSql( "
-        ALTER TABLE `order_item` 
-        ADD CONSTRAINT FK_52EA1F09FCDAEAAA 
-        FOREIGN KEY (`order_id`) 
-        REFERENCES `order` (`id`);
+        $this->addSql( "ALTER TABLE order_item ADD CONSTRAINT FK_52EA1F091252C1E9 FOREIGN KEY (parent_order_id) REFERENCES `order` (id);
         
         ALTER TABLE `order_item` 
-        ADD CONSTRAINT IDX_FS345DFGSWF2324F 
+        ADD CONSTRAINT IDX_52EA1F094584665A 
         FOREIGN KEY (`product_id`) 
         REFERENCES `product` (`id`)"
         );

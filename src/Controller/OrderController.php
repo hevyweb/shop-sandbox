@@ -186,7 +186,7 @@ class OrderController extends AbstractController
             throw new NotFoundHttpException('Order item with id ' . $orderItemId . ' does not exist.');
         }
 
-        $order = $orderItem->getOrder();
+        $order = $orderItem->getParentOrder();
         $order->removeOrderItem($orderItem);
         $this->getDoctrine()->getManager()->remove($orderItem);
         $this->getDoctrine()->getManager()->persist($order);

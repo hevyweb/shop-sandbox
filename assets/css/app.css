@@ -416,11 +416,34 @@ li .tree-grid-create {
 .user {
     max-width: 450px;
     margin: 0 auto;
-    background: #f8f8f8;
-    padding: 20px;
-    border-radius: 3px;
 }
 
+.user .user-form-body{
+    background: #f8f8f8;
+    padding: 20px;
+    border-radius: 0 0 3px 3px;
+    border-top: 2px solid #009e9a;
+}
+
+.user .tabs a {
+    display: inline-block;
+    height: 40px;
+    border-radius: 5px 5px 0 0;
+    border: 2px solid #009e9a;
+    background: #f8f8f8;
+    font-weight: bold;
+    padding: 0 30px;
+    line-height: 40px;
+    vertical-align: middle;
+    margin: 0;
+    color: gray;
+    border-bottom: 0 none;
+}
+
+.user .tabs a.active {
+    background: #009e9a;
+    color: #eeeeee;
+}
 .user h1 {
     font-size: 24px;
     text-align: center;
@@ -836,4 +859,14 @@ table.datagrid .small-coll{
     height: 30px !important;
     padding: 5px;
     border-radius: 3px;
+}
+
+.user-roles input[type="checkbox"]{
+    display: inline;
+    margin-right: 10px;
+}
+
+.readonly {
+    background: #e4e4e4;
+    color: grey;
 }

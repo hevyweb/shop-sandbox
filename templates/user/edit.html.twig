@@ -3,15 +3,24 @@
 {% block content %}
 <div class="user">
     <h1>{{ title }}</h1>
-    {{ form_start(form) }}
-        {{ form_row(form.email) }}
-        {{ form_row(form.plainPassword.first) }}
-        {{ form_row(form.plainPassword.second) }}
-        {{ form_row(form.firstName) }}
-        {{ form_row(form.lastName) }}
-        {{ form_row(form.age) }}
-        {{ form_row(form.sex) }}
-    <button type="submit">{{ submit }}</button>
-    {{ form_end(form) }}
+    {% if is_granted('ROLE_ADMIN') %}
+        {% include '/user/tabs.html.twig' with {current_tab: 'general', 'id': form.vars.value.id} %}
+    {% endif %}
+    <div class="user-form-body">
+        {{ form_start(form) }}
+            <div>
+                <label for="edit_user_username">Username <i class="fas fa-lock "></i></label>
+                <input type="text" id="edit_user_username" name="" class="readonly" required="required" value="{{ user.username }}" readonly>
+            </div>
+            {{ form_row(form.email) }}
+            {{ form_row(form.plainPassword.first) }}
+            {{ form_row(form.plainPassword.second) }}
+            {{ form_row(form.firstName) }}
+            {{ form_row(form.lastName) }}
+            {{ form_row(form.age) }}
+            {{ form_row(form.sex) }}
+        <button type="submit">{{ submit }}</button>
+        {{ form_end(form) }}
+    </div>
 </div>
 {% endblock %}

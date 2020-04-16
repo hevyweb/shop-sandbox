@@ -34,6 +34,7 @@
                     <tr class="{{ key%2 ? 'odd' : 'even' }}">
                         <td>{{ order.id }}</td>
                         <td><a href="{{ path('order-update', {id: order.id}) }}">
+                                {% if order.orderItems|length %}
                                 <div class="order-product-container">
                                     {% if order.orderItems[0].product.image is not empty %}
                                         <img src="{{ order.orderItems[0].product.image }}" alt="{{ order.orderItems[0].product.name }}">
@@ -44,6 +45,9 @@
                                     {% endif %}
                                     <div class="order-items-count">{{ order.getOrderItems|length }}</div>
                                 </div>
+                                {% else %}
+                                    No items in the order
+                                {% endif %}
                             </a>
                         </td>
                         <td></td>

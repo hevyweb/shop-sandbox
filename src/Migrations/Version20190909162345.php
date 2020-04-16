@@ -28,7 +28,6 @@ final class Version20190909162345 extends AbstractMigration
             `username` varchar(64) NOT NULL,
             `email` varchar(255) NOT NULL,
             `password` varchar(64) NOT NULL,
-            `roles` longtext NOT NULL COMMENT "(DC2Type:array)",
             PRIMARY KEY (`id`)
             ) ENGINE=InnoDB'
         );
@@ -36,7 +35,7 @@ final class Version20190909162345 extends AbstractMigration
         $this->addSql("
             ALTER TABLE `user`
             ADD UNIQUE KEY `UNIQ_8D93D649E7927C74` (`email`),
-            ADD UNIQUE KEY `UNIQ_8D93D649E7927C75` (`username`)"
+            ADD UNIQUE KEY `UNIQ_8D93D649F85E0677` (`username`)"
         );
     }
 

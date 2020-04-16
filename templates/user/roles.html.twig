@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+<div class="user">
+    <h1>{{ title }}</h1>
+    {% include '/user/tabs.html.twig' with {current_tab: 'roles', 'id': user.id} %}
+    <div class="user-form-body user-roles">
+        <form method="post" action="">
+            {% for role in roles %}
+                <div>
+                    <label><input type="checkbox" name="roles[{{ role.id }}]" {{ user.hasRole(role.code) ? 'checked="checked"' : 'test="asfd"' }} id="role_{{ role.code }}">{{ role.label }}</label>
+                </div>
+            {% else %}
+                <div>Roles haven't been set yet.</div>
+            {% endfor %}
+        <input type="hidden" name="roles_count" value="{{ roles | length }}" >
+        <button type="submit">Set role</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

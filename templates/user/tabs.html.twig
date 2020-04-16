@@ -1,0 +1,6 @@
+<div class="tabs">
+    {% set tabs = {'general': 'General', 'roles': 'Roles'} %}
+    {% for key, value in tabs %}
+        <a href="{{  path('user-edit', {id: id, tab: key}) }}" class="{{ key == current_tab ? 'active' : '' }}">{{ value }}</a>
+    {% endfor %}
+</div>

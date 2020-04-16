@@ -22,7 +22,7 @@
                         <i class="fas fa-user-circle"></i>
                         {{ app.user.firstName }} {{ app.user.lastName }}
                     </a> |
-                    <a href="{{ path('app_logout') }}">Logout <i class="fas fa-sign-out-alt"></i></a>
+                    <a href="{{ path('user-logout') }}">Logout <i class="fas fa-sign-out-alt"></i></a>
                 {% else %}
                     <a href="{{ path('user-login') }}"><i class="fas fa-sign-in-alt"></i> Sign in</a> |
                     <a href="{{ path('user-registration') }}">Sign up <i class="fas fa-user-plus"></i></a>
@@ -36,7 +36,9 @@
                     <li><a href="{{ path('home') }}">Home</a></li>
                     <li><a href="{{ path('orders') }}">Orders</a></li>
                     <li><a href="{{ path('products') }}">Products</a></li>
-                    <li><a href="{{ path('users') }}">Users</a></li>
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <li><a href="{{ path('users') }}">Users</a></li>
+                    {% endif %}
                     <li><a href="{{ path('categories') }}">Categories</a></li>
                     {% endblock %}
                 </ul>

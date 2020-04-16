@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+    <div id="roles">
+        <h2>{{ title }}</h2>
+        <div class="button-section">
+            <a href="{{ path('role-create') }}" class="button"><i class="fas fa-plus-circle"></i> Create new role</a>
+        </div>
+        <div>
+            <form method="get" action="{{ path('roles') }}" class="quick-search">
+                <input type="text" placeholder="Role name" value="{{ filtervariables.q }}" name="q">
+                <button type="submit"><i class="fas fa-search"></i></button>
+            </form>
+        </div>
+        {% include 'common/pagination.html.twig' with {
+            currentFilters: filtervariables,
+            currentPage: page,
+            paginationPath: "roles",
+            lastPage: totalPages,
+            showAlwaysFirstAndLast: true
+        } only %}
+        <div class="table">
+            <table class="datagrid">
+                <thead>
+                <tr>
+                    <th class="small-coll">#</th>
+                    <th>Role</th>
+                    <th class="small-coll">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for key, role in roles %}
+                    <tr class="{{ key%2 ? 'odd' : 'even' }}">
+                        <td>{{ role.id }}</td>
+                        <td><a href="{{ path('role-edit', {id: role.id}) }}">{{ role.name }}</a></td>
+                        <td>
+                            <a href="{{ path('role-delete', {id: role.id}) }}" class="delete-action" data-content="Are you sure, you want to remove this item?">
+                                <i class="fas fa-trash-alt bulk-remove-products"></i>
+                            </a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="3" class="no-results">No role created yet</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% include 'common/pagination.html.twig' with {
+            currentFilters: filtervariables,
+            currentPage: page,
+            paginationPath: "roles",
+            lastPage: totalPages,
+            showAlwaysFirstAndLast: true
+        } only %}
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('js/datagrid') }}
+{% endblock %}

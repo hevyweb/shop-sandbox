@@ -7,6 +7,9 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
+use Symfony\Bundle\FrameworkBundle\Routing\Router;
+use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
@@ -43,17 +46,26 @@ class AppUserAuthAuthenticator extends AbstractFormLoginAuthenticator
      */
     private $passwordEncoder;
 
+    /**
+     * @var Router
+     */
+    private $router;
+
     public function __construct(
         EntityManagerInterface $entityManager,
         UrlGeneratorInterface $urlGenerator,
         CsrfTokenManagerInterface $csrfTokenManager,
-        UserPasswordEncoderInterface $passwordEncoder
+        UserPasswordEncoderInterface $passwordEncoder,
+        RouterInterface $router
     ) {
         $this->entityManager = $entityManager;
         $this->urlGenerator = $urlGenerator;
         $this->csrfTokenManager = $csrfTokenManager;
         $this->passwordEncoder = $passwordEncoder;
+        $this->router = $router;
     }
+
+
 
     public function supports(Request $request)
     {

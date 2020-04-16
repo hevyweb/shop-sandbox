@@ -13,7 +13,7 @@ security:
                 authenticators:
                     - App\Security\AppUserAuthAuthenticator
             logout:
-                path: app_logout
+                path: user-logout
             remember_me:
                 secret:   '%kernel.secret%'
                 lifetime: 604800 # 1 week in seconds
@@ -24,3 +24,4 @@ security:
     access_control:
         - { path: ^/$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/[^login|registration], roles: ROLE_USER }
+        - { path: ^/orders, roles: ROLE_USER }

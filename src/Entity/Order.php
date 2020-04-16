@@ -66,7 +66,7 @@ class Order
     private $completed_at;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\OrderItem", mappedBy="order", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="App\Entity\OrderItem", mappedBy="parent_order", orphanRemoval=true)
      */
     private $orderItems;
 
@@ -148,7 +148,7 @@ class Order
     {
         if (!$this->orderItems->contains($orderItem)) {
             $this->orderItems[] = $orderItem;
-            $orderItem->setOrder($this);
+            $orderItem->setParentOrder($this);
         }
 
         return $this;
@@ -159,8 +159,8 @@ class Order
         if ($this->orderItems->contains($orderItem)) {
             $this->orderItems->removeElement($orderItem);
             // set the owning side to null (unless already changed)
-            if ($orderItem->getOrder() === $this) {
-                $orderItem->setOrder(null);
+            if ($orderItem->getParentOrder() === $this) {
+                $orderItem->setParentOrder(null);
             }
         }
 
